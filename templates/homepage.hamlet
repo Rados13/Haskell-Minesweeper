@@ -1,0 +1,15 @@
+<div .masthead>
+    <div .container>
+        <div .row>
+            <h1 .header>
+                Miner online game
+            <h2>
+                Game made in Haskell with use of yesod to set it up on the net
+
+            <form .form-horizontal method=post action=@{HomeR} enctype=#{formEnctype}>
+                ^{formWidget}
+                <button .btn.btn-primary>Start Game
+
+            $# <a href=@{GamePlayR}>Start Game
+
+

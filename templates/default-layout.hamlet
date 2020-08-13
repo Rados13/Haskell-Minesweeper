@@ -1,0 +1,28 @@
+
+<!-- Static navbar -->
+<nav .navbar.navbar-default.navbar-static-top>
+    <div .container>
+        <div #navbar .collapse.navbar-collapse>
+            <ul .nav.navbar-nav>
+                $forall MenuItem label route _ <- navbarLeftFilteredMenuItems
+                    <li :Just route == mcurrentRoute:.active>
+                        <a href="@{route}">#{label}
+
+<!-- Page Contents -->
+
+<div .container>
+
+
+    $maybe msg <- mmsg
+      <div .alert.alert-info #message>#{msg}
+
+
+$if (Just HomeR == mcurrentRoute)
+    ^{widget}
+$else
+    <div .container>
+        <div .row>
+            <div .col-md-12>
+                ^{widget}
+
+
