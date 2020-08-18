@@ -1,1 +1,13 @@
 <h1> Start game! 
+<div> 
+    #{show moves}
+    $forall line <- bombsMap
+        <div .line>
+            $forall field <- line
+                <div .field> 
+                    <a .link href=@{NextGameMoveR gameSettings $ MapFieldWrapper (fst field) (snd field)}>
+                        $if isClickedField field moves
+                            <div style="color: black">#{fst field}
+                        $else
+                            <div .text>#{fst field}
+                        <div .nonVisible>#{show (snd field)}

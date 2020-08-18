@@ -1,0 +1,36 @@
+
+.line{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.field{
+    min-width: 2.5%;
+    min-height: 2.5%;
+    background-color: #FFFAF0;
+    color: black;
+    border-style: solid;
+    border-width: 1px;
+}
+
+.text{
+    visibility: hidden;
+}
+
+.nonVisible{
+    display: none;
+}
+
+.btn-link {
+    width: 100%;
+    border: none;
+    outline: none;
+    background: none;
+    cursor: pointer;
+    color: #0000EE;
+    padding: 0;
+    text-decoration: underline;
+    font-family: inherit;
+    font-size: inherit;
+}

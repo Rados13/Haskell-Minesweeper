@@ -9,6 +9,10 @@ input{
   text-align: center;
 }
 
+label{
+  padding-right: 10px;
+}
+
 .container{
   height: 100%;
 }

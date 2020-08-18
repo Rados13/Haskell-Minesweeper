@@ -5,4 +5,8 @@
 
 / HomeR GET POST
 
-/game/#{GameSettings} GamePlayR GET
+
+/game/#GameSettings GamePlayR GET
+!/game/#GameSettings/generate GenerateMapR GET
+!/game/#GameSettings/#MapFieldWrapper NextGameMoveR GET
+

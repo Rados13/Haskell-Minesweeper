@@ -7,22 +7,44 @@
 module Handler.GamePlay where
 
 import Import
--- getGamePlayR :: Handler TypedContent
--- getGamePlayR = selectRep $ do 
---     -- provideRep $ pure $ object ["num" .= toInt 5]
---     provideRep $ defaultLayout $ do
---         setTitle "Hello there!"
---         [whamlet|<p>Hello there 5!|]
+import Text.Julius (RawJS (..))
+import System.Random  
+import Control.Monad.State  
+import Data.Char
+import Data.List.Split  (divvy,splitOn)
+import qualified Data.List as DL (intersect)
+import Handler.GenerateMap
 
+
+retriveFromSessionMap :: GameSettings -> Maybe Text ->[(Char,Int)]
+retriveFromSessionMap gameSettings lookupMap= do
+                        let mapValues = case lookupMap of
+                                                Nothing -> generateMap gameSettings
+                                                Just map -> unpack map  
+                        zip mapValues $ [0 .. length mapValues - 1]
+
+retriveFromSessionMoves :: Maybe Text -> [Int]
+retriveFromSessionMoves lookupMoves = do
+                        case lookupMoves of 
+                                        Nothing -> []
+                                        Just moves -> textToIntList moves
 
 getGamePlayR :: GameSettings -> Handler Html
-getGamePlayR (GameSettings bombs time size) = do
-    defaultLayout $ do
-        setTitle "Game!"
-        [whamlet| <p> It's work #{bombs} #{time} #{size}|]    
+getGamePlayR (GameSettings bombs gameTime mapSize) = 
+    if isPositiveSettings $ GameSettings bombs gameTime mapSize then redirect HomeR
+        else do
+            let gameSettings = GameSettings bombs gameTime mapSize
+            lookupMap <- lookupSession "map"
+            lookupMoves <- lookupSession "moves"
+            
+            let mapFields =  retriveFromSessionMap  gameSettings lookupMap
+            let bombsMap =  divvy mapSize mapSize mapFields
+            
+            let moves = retriveFromSessionMoves lookupMoves
+            defaultLayout $ do
+                setTitle "Game!"                
+                $(widgetFile "game/play")
+                
 
--- postGamePlayR :: Int -> Int -> Int -> Handler Value
--- postGamePlayR bombs time size = do
---     defaultLayout $ do
---         setTitle "Game!"
---         [whamlet| <p> It's work #{bombs} #{time} #{size}|]
+isClickedField :: MapField -> [Int] -> Bool
+isClickedField (_,i) moves = i `elem` moves

@@ -19,6 +19,8 @@ import qualified Data.CaseInsensitive as CI
 import qualified Data.Text.Encoding as TE
 import qualified Data.Text as T
 import qualified Text.Read as TR
+import Data.List.Split  (splitOn)
+import Data.Char (isDigit)
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
@@ -43,20 +45,36 @@ data MenuTypes
 
 -- My models
 
+type MapField = (Char,Int)
+
+
+data MapFieldWrapper = MapFieldWrapper 
+    {   fieldChar :: Char 
+    ,   fieldNum  :: Int
+    }deriving (Show,Eq,Read)
+
+instance PathPiece MapFieldWrapper where
+    toPathPiece (MapFieldWrapper char num) = pack $ [char]++"," ++ (show num) 
+    fromPathPiece t = do
+        let stringT = T.unpack t
+        let ((c:_):n:_) = splitOn "," $ stringT
+        Just $ MapFieldWrapper c (stringToInt n)
+
 data GameSettings = GameSettings
     { numberOfBombs :: Int
     , time :: Int
     , size :: Int
-    }deriving (Show, Eq, Read)
+}deriving (Show, Eq, Read)
 
 instance PathPiece GameSettings where
     toPathPiece (GameSettings a b c) = T.init . T.tail . pack . show $ [a,b,c]
     fromPathPiece t = do
         let stringT = T.unpack t
-        let (a,(_:rest)) = span (/=',') stringT
-        let (b,(_:rest1)) = span (/=',') rest
-        let (c,_) = span (/= ',') rest1
-        Just $ GameSettings (stringToInt a) (stringToInt b) (stringToInt c)
+        let (a:b:c:_) = map stringToInt . splitOn "," $ stringT
+        Just $ GameSettings a b c
+
+textToIntList :: Text -> [Int]
+textToIntList text = map stringToInt . splitOn "," . T.unpack $ text
 
 stringToInt :: String -> Int
 stringToInt stringA = do
@@ -115,7 +133,6 @@ instance Yesod App where
     defaultLayout widget = do
         master <- getYesod
         mmsg <- getMessage
-
         mcurrentRoute <- getCurrentRoute
 
         -- Get the breadcrumbs, as defined in the YesodBreadcrumbs instance.
