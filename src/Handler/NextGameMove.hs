@@ -11,46 +11,32 @@ import Import
 import System.Random  
 import Control.Monad.State  
 import Text.Julius (RawJS (..))
-import qualified Data.List as DL (nub)
+import qualified Data.List as DL (union)
 import qualified Data.Text as T
-import Handler.GenerateMap
+import Data.List.Split  (splitOn)
 import Handler.GamePlay
+import Handler.GenerateMap (neighboursPositions)
 
 getNextGameMoveR :: GameSettings -> MapFieldWrapper -> Handler ()
 getNextGameMoveR gameSettings (MapFieldWrapper char num) = do
-            let fieldChar = char
-            let field = (char,num)
-            lookupMap <- lookupSession "map"
+
             lookupMoves <- lookupSession "moves"
-            let oldMoves = retriveFromSessionMoves lookupMoves
-            let moves = case checkIfBlank fieldChar of  False -> oldMoves ++ [snd field]
-                                                        True -> do
-                                                            let mapFields =  retriveFromSessionMap gameSettings lookupMap       
-                                                            let blankFields = blankFieldsOnMap mapFields
-                                                            (++) oldMoves $ findNeighboursBlankFields (size gameSettings) 
-                                                                blankFields [snd field] 
-            setSession "moves" $ T.init . T.tail . T.pack . show $ moves
-            redirectUltDest $ GamePlayR gameSettings
+            let oldMoves = retriveMovesAsListInt lookupMoves
 
 
+            let newMoves = intListToText $ if length oldMoves == 0 then  [num] 
+                                            else DL.union oldMoves $ [num]
 
-blankFieldsOnMap :: [MapField] -> [Int]
-blankFieldsOnMap mapFields = map (\x -> snd x) . filter (\(c,i) -> c=='-') $ mapFields 
+            deleteSession "moves"
+            setSession "moves"  newMoves            
 
-findNeighboursBlankFields :: Int -> [Int] -> [Int] -> [Int]
+            redirect $ GamePlayR gameSettings
 
-findNeighboursBlankFields mapSize blankFields acc | length acc == length newAcc = acc
-                                                  | otherwise = findNeighboursBlankFields mapSize blankFields newAcc
-                                                    where newAcc = filter (\x ->x `elem` blankFields) . 
-                                                            DL.nub . concat .
-                                                            map (\x -> [pred x .. succ x] ++
-                                                             [x-mapSize-1 .. x-mapSize +1] ++ 
-                                                             [x+mapSize-1 .. x+mapSize+1]) $ acc
-
-
-
-checkIfBlank :: Char -> Bool
-checkIfBlank '-' = True
-checkIfBlank _   = False
+postNextGameMoveR :: GameSettings -> MapFieldWrapper -> Handler ()
+postNextGameMoveR _ (MapFieldWrapper char num) = do
+            lookupBombs <- lookupSession "bombs"
+            let markedPositions = retriveMarkedPositions lookupBombs
+            let newMarkedPositions  = if num `elem` markedPositions then filter (/= num) markedPositions else markedPositions ++ [num]
+            setSession "bombs" $ intListToText newMarkedPositions
 
 

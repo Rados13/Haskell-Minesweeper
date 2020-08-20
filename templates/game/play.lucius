@@ -34,3 +34,10 @@
     font-family: inherit;
     font-size: inherit;
 }
+
+.bomb{
+    background-color: red;
+}
+
+.box{
+}

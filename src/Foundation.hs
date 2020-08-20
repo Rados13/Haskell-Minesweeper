@@ -73,8 +73,11 @@ instance PathPiece GameSettings where
         let (a:b:c:_) = map stringToInt . splitOn "," $ stringT
         Just $ GameSettings a b c
 
+intListToText :: [Int] -> Text
+intListToText list = T.init . T.tail . T.pack . show $ list
+
 textToIntList :: Text -> [Int]
-textToIntList text = map stringToInt . splitOn "," . T.unpack $ text
+textToIntList text = filter (>=0) . map stringToInt . splitOn "," . T.unpack $ text
 
 stringToInt :: String -> Int
 stringToInt stringA = do
@@ -144,6 +147,10 @@ instance Yesod App where
                     { menuItemLabel = "Home"
                     , menuItemRoute = HomeR
                     , menuItemAccessCallback = True
+                    }, NavbarLeft $ MenuItem
+                    {   menuItemLabel = "Guide"
+                    ,   menuItemRoute = GuideR
+                    ,   menuItemAccessCallback = True
                     }
                 ]
 

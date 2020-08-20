@@ -18,19 +18,22 @@ import qualified Data.List as DL (intersect)
 generateBombsPositions :: [Int] -> Int -> Int -> [Int] -> [Int]
 generateBombsPositions _ 0 _ acc = sort acc
 generateBombsPositions (x:xs) bombsLeft size acc | any (==val) acc == True || val < 0 = generateBombsPositions xs bombsLeft size acc 
-                                                 | otherwise               = generateBombsPositions xs newBombsLeft size $ val:acc 
+                                                 | otherwise   = generateBombsPositions xs newBombsLeft size $ val:acc 
                                                         where   val = x `rem` size
                                                                 newBombsLeft = bombsLeft - 1
 
 
 neighboursPositions :: Int -> Int -> [Int]
-neighboursPositions idx size    | idx `rem` size == 0  = (++) [last . impureNonNull $ horizontalNeighbours] $ concat . map (tail . impureNonNull) $ verticalNeighbours
-                                | idx `rem` size == size - 1 = (++) [head . impureNonNull $ horizontalNeighbours] $ concat . map (init . impureNonNull) $ verticalNeighbours
+neighboursPositions idx size    | idx `rem` size == 0  = (++) [last . impureNonNull $ horizontalNeighbours] 
+                                                        $ concat . map (tail . impureNonNull) $ verticalNeighbours
+                                | idx `rem` size == size - 1 = (++) [head . impureNonNull $ horizontalNeighbours] 
+                                                        $ concat . map (init . impureNonNull) $ verticalNeighbours
                                 | otherwise = (++) horizontalNeighbours $ concat verticalNeighbours
                                     where   top = idx - size
                                             bottom = idx + size
                                             verticalNeighbours = [[pred top .. succ top],[pred bottom .. succ bottom]]
-                                            horizontalNeighbours = [pred idx,succ idx]     
+                                            horizontalNeighbours = [pred idx,succ idx]   
+                                                                              
 
 neighboursBombs :: Int -> Int -> [Int] -> Int
 neighboursBombs idx size bombs  = length . DL.intersect bombs $ (neighboursPositions idx  size) 
@@ -55,8 +58,15 @@ getGenerateMapR :: GameSettings -> Handler ()
 getGenerateMapR  gameSettings =
     if isPositiveSettings gameSettings then redirectUltDest HomeR
         else do
-            setSession "map" $ pack $ generateMap gameSettings
+            deleteSession "map"
+            deleteSession "moves"
+            deleteSession "bombs"
+            let tmp = generateMap gameSettings
+            $logInfo $ pack . show $ length tmp
+            setSession "map" $ pack $ tmp
             setSession "moves" $ pack $ ""
-            redirectUltDest $ GamePlayR gameSettings
+            setSession "bombs" $ pack $ ""
+            
+            redirect $ GamePlayR gameSettings
             
                 

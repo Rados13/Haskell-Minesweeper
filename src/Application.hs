@@ -41,6 +41,7 @@ import Handler.Home
 import Handler.GamePlay
 import Handler.NextGameMove
 import Handler.GenerateMap
+import Handler.Guide
 
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
@@ -152,7 +153,6 @@ getApplicationRepl = do
 
 shutdownApp :: App -> IO ()
 shutdownApp _ = return ()
-
 
 ---------------------------------------------
 -- Functions for use in development with GHCi

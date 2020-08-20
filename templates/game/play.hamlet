@@ -1,13 +1,28 @@
-<h1> Start game! 
-<div> 
-    #{show moves}
+$if failed
+    <h1> Poorly you loose!
+$elseif gameEnd
+    <h1> Congratulations You Won! 
+$else
+    <h1> Start Game!
+<div .box> 
+    <div> Discovered fields:        #{show movesLen}
+    <div> Fields last to discover:  #{show freeFields}
+    <div #markInfo> Marked as bombs:          #{show (length markedPositions)}   
     $forall line <- bombsMap
         <div .line>
             $forall field <- line
-                <div .field> 
-                    <a .link href=@{NextGameMoveR gameSettings $ MapFieldWrapper (fst field) (snd field)}>
-                        $if isClickedField field moves
-                            <div style="color: black">#{fst field}
-                        $else
+                $if isClickedField field markedPositions      
+                    <div .bomb .field>
+                        <a .link href=@{NextGameMoveR gameSettings $ MapFieldWrapper (fst field) (snd field)}>
                             <div .text>#{fst field}
-                        <div .nonVisible>#{show (snd field)}
+                            <div .nonVisible>#{show (snd field)}                    
+                $elseif isClickedField field discoveredPositions
+                    <div .field .clicked> 
+                        <a .link>
+                            <div style="color: black">#{fst field}
+                            <div .nonVisible>#{show (snd field)}
+                $else 
+                    <div .field>
+                        <a .link href=@{NextGameMoveR gameSettings $ MapFieldWrapper (fst field) (snd field)}>
+                            <div .text>#{fst field}
+                            <div .nonVisible>#{show (snd field)}
