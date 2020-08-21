@@ -1,4 +1,10 @@
-## Haskell Setup
+# Haskell-Minesweeper
+
+## Introduction
+
+How name of this project suggest it is a Minesweeper game working in Haskell. For GUI and handle user input Yesod framework was used.
+
+## Run project
 
 1. If you haven't already, [install Stack](https://haskell-lang.org/get-started)
 	* On POSIX systems, this is usually `curl -sSL https://get.haskellstack.org/ | sh`
@@ -7,37 +13,23 @@
 
 If you have trouble, refer to the [Yesod Quickstart guide](https://www.yesodweb.com/page/quickstart) for additional detail.
 
-## Development
-
-Start a development server with:
-
+To run server
 ```
-stack exec -- yesod devel
+yesod devel
 ```
-
 As your code changes, your site will be automatically recompiled and redeployed to localhost.
 
-## Tests
-
-```
-stack test --flag Haskell-Miner:library-only --flag Haskell-Miner:dev
-```
-
-(Because `yesod devel` passes the `library-only` and `dev` flags, matching those flags means you don't need to recompile between tests and development, and it disables optimization to speed up your test compile times).
 
 ## Documentation
 
-* Read the [Yesod Book](https://www.yesodweb.com/book) online for free
-* Check [Stackage](http://stackage.org/) for documentation on the packages in your LTS Haskell version, or [search it using Hoogle](https://www.stackage.org/lts/hoogle?q=). Tip: Your LTS version is in your `stack.yaml` file.
-* For local documentation, use:
-	* `stack haddock --open` to generate Haddock documentation for your dependencies, and open that documentation in a browser
-	* `stack hoogle <function, module or type signature>` to generate a Hoogle database and search for your query
-* The [Yesod cookbook](https://github.com/yesodweb/yesod-cookbook) has sample code for various needs
+In this app you have five routes. Described in table below.
 
-## Getting Help
+| Routes url	| Handled HTTP Methods 	| Description 		 |
+|:--------------|:----------------------|:-------------------|
+|`/`			| GET 	POST			| Homepage where you setup parameters of game, POST is for handle form result of game parameters|
+|`/game/{"GameSettings"}/generate`	| GET			| On this route the game map is generated, with positions of bombs |
+|`/game/{"GameSettings"}/`			| GET			| Here the game map is displayed and client play the game |
+|`/game/{"GameSettings"}/{"MapFieldWrapper"}`| GET POST	| GET is used for handling discovering new fields, POST is used for marking field as bomb|
 
-* Ask questions on [Stack Overflow, using the Yesod or Haskell tags](https://stackoverflow.com/questions/tagged/yesod+haskell)
-* Ask the [Yesod Google Group](https://groups.google.com/forum/#!forum/yesodweb)
-* There are several chatrooms you can ask for help:
-	* For IRC, try Freenode#yesod and Freenode#haskell
-	* [Functional Programming Slack](https://fpchat-invite.herokuapp.com/), in the #haskell, #haskell-beginners, or #yesod channels.
+
+In the handlers folder almost all logic was writed (Handlers in Yesod are equivalent of controllers from MVC). Every route has his own handler. The web files are in templates folder. Yesod equivalent of files: HTML - Hamlet, CSS - Lucious, Javascript - Julius
