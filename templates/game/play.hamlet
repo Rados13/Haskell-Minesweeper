@@ -1,7 +1,7 @@
 $if failed
-    <h1> Poorly you loose!
+    <h1 #end> Poorly you loose!
 $elseif gameEnd
-    <h1> Congratulations You Won! 
+    <h1 #end> Congratulations You Won! 
 $else
     <h1> Start Game!
 <div .box> 

@@ -38,6 +38,3 @@
 .bomb{
     background-color: red;
 }
-
-.box{
-}
