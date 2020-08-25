@@ -1,3 +1,8 @@
+body{
+    background-image: url("https://images.pexels.com/photos/288988/pexels-photo-288988.jpeg?cs=srgb&dl=pexels-miko%C5%82aj-kaczmarek-288988.jpg&fm=jpg");
+    background-size: cover;
+}
+
 
 .line{
     display: flex;
@@ -9,9 +14,9 @@
     min-width: 2.5%;
     min-height: 2.5%;
     background-color: #FFFAF0;
-    color: black;
     border-style: solid;
     border-width: 1px;
+    opacity: 0.4;
 }
 
 .text{
@@ -37,4 +42,23 @@
 
 .bomb{
     background-color: red;
+}
+
+.clicked{
+    opacity: 1;
+    border:none;
+    background-color: transparent;
+}
+
+#box{
+    background-color: white;
+    color:black;
+    max-width: 30%;
+    margin-left:35%;
+}
+
+.container{
+    display:flex;
+    flex-direction:column;
+    justify-content: center;
 }
